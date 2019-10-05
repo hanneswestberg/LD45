@@ -41,3 +41,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Particles
+    uniqueID: 1849641773
+    locked: 0
+  - name: UI
+    uniqueID: 1741519799
+    locked: 0

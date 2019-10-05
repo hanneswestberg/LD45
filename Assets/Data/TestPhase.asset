@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd5d8dfaab4dca4496b1d198ea2b225, type: 3}
+  m_Name: TestPhase
+  m_EditorClassIdentifier: 
+  percentDifferances:
+    minValue: 0.20631245
+    maxValue: 0.28057563
+  newMassFactor:
+    minValue: 10.053376
+    maxValue: 12.787188
+  acceptedErrorMargin:
+    minValue: 0.10211185
+    maxValue: 0.19958243
+  errorPenalty:
+    minValue: 0
+    maxValue: 0.10211183
+  missionTime:
+    minValue: 60.403812
+    maxValue: 60.403812
+  missionText: 'Phase 1: Initialize the Singularity'
