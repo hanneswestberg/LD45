@@ -46,7 +46,7 @@ public class ParticleController : MonoBehaviour
         StartCoroutine(UpdateParticles());
     }
 
-    void ToggleAll(string state)
+    public void ToggleAll(string state)
     {
         if (state == "play")
         {
@@ -130,11 +130,11 @@ public class ParticleController : MonoBehaviour
             float mass_dark = norm_mass * bm.CurrentMassRatioDark;
 
             var regularEmission = regular_matter.emission;
-            regularEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+            regularEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f && !bm.IsGameFinishedAndWaitingForUserToExplode);
             var antiEmission = anti_matter.emission;
-            antiEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+            antiEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f && !bm.IsGameFinishedAndWaitingForUserToExplode);
             var darkEmission = dark_matter.emission;
-            darkEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+            darkEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f && !bm.IsGameFinishedAndWaitingForUserToExplode);
 
             var main = regular_matter.main;
             if(norm_mass > 0f) {

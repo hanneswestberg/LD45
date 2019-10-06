@@ -21,6 +21,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Color colorMassDark;
     [SerializeField]
+    private Color colorTargetMass;
+    [SerializeField]
     private Color colorDiodeOff;
     [SerializeField]
     private Color colorDiodeOn;
@@ -393,35 +395,36 @@ public class UIManager : MonoBehaviour
     }
 
     public void UpdatePanelForMission() {
-        var text = $"> {CurrentPhase.PhaseName} \n> target mass {CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))} solar masses\n> proportions ";
-        var formattedText = $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>";
+        var text = $"> {CurrentPhase.PhaseName}\n> target mass ";
+        var formattedText = $"<color=#{ColorUtility.ToHtmlStringRGBA(colorTargetMass)}>{CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))}</color> solar masses"
+            + $"\n> proportions <color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F1")}%</color>";
 
         UpdatePanelText(text, 2f, false, true, formattedText);
     }
 
     public IEnumerator UpdatePanelForResults() {
-        UpdatePanelText($"> expected ", 0.5f, false, true, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>");
+        UpdatePanelText($"> expected ", 0.5f, false, true, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F1")}%</color>");
         yield return new WaitForSeconds(1f);
 
-        UpdatePanelText($"\n> target mass {CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))} sm", 0.5f, false, false);
+        UpdatePanelText($"\n> target mass ", 0.5f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorTargetMass)}>{CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))}</color> sm");
         yield return new WaitForSeconds(1f);
 
-        UpdatePanelText($"\n> current ", 0.5f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(bgMan.CurrentMassRatioRegular * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(bgMan.CurrentMassRatioAnti * 100f).ToString("F")}</color>"
-            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(bgMan.CurrentMassRatioDark * 100f).ToString("F")}</color>");
+        UpdatePanelText($"\n> current ", 0.5f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(bgMan.CurrentMassRatioRegular * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(bgMan.CurrentMassRatioAnti * 100f).ToString("F1")}%</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(bgMan.CurrentMassRatioDark * 100f).ToString("F1")}%</color>");
         yield return new WaitForSeconds(1f);
 
-        UpdatePanelText($"\n> current mass {bgMan.CurrentMass.ToString("n", new CultureInfo("en-US"))} sm", 0.5f, false, false);
+        UpdatePanelText($"\n> current mass ", 0.5f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorTargetMass)}>{bgMan.CurrentMass.ToString("n", new CultureInfo("en-US"))}</color> sm");
         yield return new WaitForSeconds(3f);
 
-        UpdatePanelText($"\n> error margin ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorDiodeFail)}>{bgMan.CalculateErrorMargin().ToString("F")}%</color>");
+        UpdatePanelText($"\n> error margin ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorDiodeFail)}>{bgMan.CalculateErrorMargin().ToString("F1")}%</color>");
         yield return new WaitForSeconds(1.5f);
 
-        UpdatePanelText($"\n> volatility increased by ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorVolatility)}>{bgMan.CalculateVolatilityGain().ToString("F")}%</color>");
+        UpdatePanelText($"\n> volatility increased by ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorVolatility)}>{bgMan.CalculateVolatilityGain().ToString("F1")}%</color>");
         yield return new WaitForSeconds(1f);
 
         StartCoroutine(UpdateVolatilityMeter());

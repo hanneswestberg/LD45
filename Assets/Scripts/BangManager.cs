@@ -64,6 +64,7 @@ public class BangManager : MonoBehaviour {
     public Phase CurrentPhase { get; private set; }
     public int CurrentPhaseIndex { get; private set; }
     public bool PhaseIsOnGoing { get; private set; }
+    public bool IsGameFinishedAndWaitingForUserToExplode { get; private set; }
     public Queue<PhaseData> phaseQueueData;
 
 
@@ -83,6 +84,8 @@ public class BangManager : MonoBehaviour {
 
 
     public void StartNewBigBang() {
+        IsGameFinishedAndWaitingForUserToExplode = false;
+
         // Start everything here
         CurrentMassRegular = 0.001f;
         CurrentMassDark = 0.001f;
@@ -286,10 +289,12 @@ public class BangManager : MonoBehaviour {
 
                 UIManager.instance.UpdatePanelText("\n> awaiting explosion input...", 2f, false, false);
                 PhaseIsOnGoing = true;
+                IsGameFinishedAndWaitingForUserToExplode = true;
                 while(!UIManager.instance.UserInputExplode) {
                     yield return null;
                 }
                 UIManager.instance.UserInputExplode = false;
+                IsGameFinishedAndWaitingForUserToExplode = false;
                 PhaseIsOnGoing = false;
                 yield return new WaitForSeconds(1f);
                 UIManager.instance.UpdatePanelText("\n> big bang created", 2f, false, false);

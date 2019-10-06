@@ -20,12 +20,12 @@ MonoBehaviour:
     minValue: 7.773432
     maxValue: 10.507242
   acceptedErrorMargin:
-    minValue: 0.10211185
-    maxValue: 0.19958243
+    minValue: 0
+    maxValue: 0.99999994
   errorPenalty:
     minValue: 0
-    maxValue: 0.10211183
+    maxValue: 0
   missionTime:
     minValue: 3.5924873
-    maxValue: 3.5924873
+    maxValue: 13.59596
   missionText: phase1 -singularity -init

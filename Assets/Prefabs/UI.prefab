@@ -2519,8 +2519,8 @@ MonoBehaviour:
 
     Small knob - Pause
 
-
     Explode - DON''T
+
 
     Remember the time limit.
 
@@ -4332,7 +4332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2191498994500020706
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5989,8 +5989,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4289908160
-  m_fontColor: {r: 0.75294125, g: 0.80392164, b: 0.69803923, a: 1}
+    rgba: 4285398015
+  m_fontColor: {r: 1, g: 0.9843137, b: 0.42745098, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6541,9 +6541,9 @@ RectTransform:
   m_Father: {fileID: 4262209733235726413}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -317, y: 58}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 63, y: -67}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4262209733017372212
@@ -8083,7 +8083,7 @@ Canvas:
   m_GameObject: {fileID: 4262209734320699035}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -8149,6 +8149,7 @@ MonoBehaviour:
   colorMassRegular: {r: 0.37624598, g: 0.8396226, b: 0.39986908, a: 1}
   colorMassAnti: {r: 0.8396226, g: 0.2891153, b: 0.2891153, a: 1}
   colorMassDark: {r: 0.4669811, g: 0.53596, b: 1, a: 1}
+  colorTargetMass: {r: 1, g: 0.9848606, b: 0.4292453, a: 1}
   colorDiodeOff: {r: 0.22745098, g: 0.22745098, b: 0.22745098, a: 1}
   colorDiodeOn: {r: 1, g: 1, b: 1, a: 1}
   colorDiodeSuccess: {r: 0.3764706, g: 0.8392157, b: 0.4, a: 1}
@@ -10206,8 +10207,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4285398015
+  m_fontColor: {r: 1, g: 0.9843137, b: 0.42745098, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11270,11 +11271,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2846969457842791093, guid: 9735c99452b60e84d9e09e99a8205f42,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2846969456729836994, guid: 9735c99452b60e84d9e09e99a8205f42,
         type: 3}
       propertyPath: m_text
@@ -11710,11 +11706,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 6707933358864924111, guid: 29987b4830e5ba24588d4c51b240103a,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5387214415746523474, guid: 29987b4830e5ba24588d4c51b240103a,
         type: 3}
