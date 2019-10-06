@@ -12,5 +12,6 @@
     public RangedFloat AcceptedErrorMargin { get; set; }
     public float ErrorPenalty { get; set; }
     public string MissionText { get; set; }
+    public string PhaseName { get; set; }
     public float MissionTime { get; set; }
 }

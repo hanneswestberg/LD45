@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private bool debugMode = false;
+    public bool DebugMode { get { return debugMode; } }
 
     // Singleton
     private void Awake() {
@@ -27,24 +28,27 @@ public class GameManager : MonoBehaviour
             Debug.LogError("No BangManager Instance in the scene, the game will not work!");
             return;
         }
-
-        // Show tutorial here
-
-        StartCoroutine(StartAnimation());
     }
 
-    private IEnumerator StartAnimation() {
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
+    public IEnumerator StartAnimation() {
         if(!debugMode) {
             yield return new WaitForSeconds(1f);
-            UIManager.instance.UpdatePanelText("> start bigbang.exe", 2f, true);
+            UIManager.instance.UpdatePanelText("> start bigbang.exe", 2f, true, true);
             yield return new WaitForSeconds(3f);
             UIManager.instance.UpdatePanelText("\n...", 1f, false);
             yield return new WaitForSeconds(2f);
-            UIManager.instance.UpdatePanelText("\nbig bang creator loaded", 1f, false);
+            UIManager.instance.UpdatePanelText("\n> big bang creator loaded", 1f, false);
             yield return new WaitForSeconds(2f);
-            UIManager.instance.UpdatePanelText("\nopening up parallell dimension", 1f, false);
+            UIManager.instance.UpdatePanelText("\n> opening up parallell dimension", 1f, false);
             yield return new WaitForSeconds(2f);
-            UIManager.instance.UpdatePanelText("\nplease specify action:", 1f, false);
+            UIManager.instance.UpdatePanelText("\n> initialize big bang by going to phase 5", 1f, false);
+            yield return new WaitForSeconds(3f);
+            UIManager.instance.UpdatePanelText("\n> please specify action:", 1f, false);
             yield return new WaitForSeconds(2f);
 
         }

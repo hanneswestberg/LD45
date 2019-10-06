@@ -8,6 +8,10 @@ public class PhaseData : ScriptableObject
 #pragma warning disable 0649
     [Header("Phase Data:")]
     [SerializeField]
+    private string phaseName;
+
+
+    [SerializeField]
     [MinMaxRange(0, 1)]
     private RangedFloat percentDifferances;
 
@@ -36,6 +40,7 @@ public class PhaseData : ScriptableObject
     [TextArea]
     private string missionText;
 
+    public string PhaseName { get { return phaseName; } }
     public RangedFloat PercentDifferances { get { return percentDifferances; } }
     public RangedFloat NewMassFactor { get { return newMassFactor; } }
     public RangedFloat AcceptedErrorMargin { get { return acceptedErrorMargin; } }

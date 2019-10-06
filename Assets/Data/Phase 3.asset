@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bd5d8dfaab4dca4496b1d198ea2b225, type: 3}
   m_Name: Phase 3
   m_EditorClassIdentifier: 
+  phaseName: phase 3
   percentDifferances:
     minValue: 0.22023676
     maxValue: 0.44766772
@@ -22,8 +23,8 @@ MonoBehaviour:
     minValue: 0.04641448
     maxValue: 0.10211202
   errorPenalty:
-    minValue: 0.0974704
-    maxValue: 0.18101642
+    minValue: 0.22951972
+    maxValue: 0.31306574
   missionTime:
     minValue: 48.93202
     maxValue: 63.97033

@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Globalization;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
+
+    private BangManager bgMan;
 
 #pragma warning disable 0649
     [Header("UI Colors:")]
@@ -17,6 +20,16 @@ public class UIManager : MonoBehaviour
     private Color colorMassAnti;
     [SerializeField]
     private Color colorMassDark;
+    [SerializeField]
+    private Color colorDiodeOff;
+    [SerializeField]
+    private Color colorDiodeOn;
+    [SerializeField]
+    private Color colorDiodeSuccess;
+    [SerializeField]
+    private Color colorDiodeFail;
+    [SerializeField]
+    private Color colorVolatility;
 
     [Header("Non interactable:")]
     [SerializeField]
@@ -26,7 +39,7 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private RectTransform gaugeVolatility;
     [SerializeField]
-    private RectTransform gaugeMass;
+    private TextMeshProUGUI currentMassText;
     [SerializeField]
     private RectTransform gaugeMassRate;
     [SerializeField]
@@ -35,6 +48,16 @@ public class UIManager : MonoBehaviour
     private TextMeshProUGUI missionTimer;
     [SerializeField]
     private List<Image> phaseLights;
+    [SerializeField]
+    private Image currentMassLightSuccess;
+    [SerializeField]
+    private Image currentMassLightWarning;
+    [SerializeField]
+    private GameObject explosion;
+    [SerializeField]
+    private Image temperatureLight;
+    [SerializeField]
+    private Image densityLight;
 
     [Header("Interactable:")]
     [SerializeField]
@@ -45,6 +68,8 @@ public class UIManager : MonoBehaviour
     private RectTransform imageSwitchExplodeCover;
     [SerializeField]
     private Button buttonExplode;
+    [SerializeField]
+    private GameObject note;
 
     [Header("Sounds:")]
     [SerializeField]
@@ -53,6 +78,8 @@ public class UIManager : MonoBehaviour
     private SimpleAudioEvent timerLowSound;
     [SerializeField]
     private SimpleAudioEvent keyboardSound;
+    [SerializeField]
+    private SimpleAudioEvent keyboardEnterSound;
     [SerializeField]
     private SimpleAudioEvent switchSound;
     [SerializeField]
@@ -63,6 +90,20 @@ public class UIManager : MonoBehaviour
     private SimpleAudioEvent explodeCoverSound;
     [SerializeField]
     private SimpleAudioEvent computerNoise;
+    [SerializeField]
+    private SimpleAudioEvent diodeSuccess;
+    [SerializeField]
+    private SimpleAudioEvent diodeFail;
+    [SerializeField]
+    private SimpleAudioEvent explodeSound;
+    [SerializeField]
+    private SimpleAudioEvent computerFormattedNoise;
+    [SerializeField]
+    private SimpleAudioEvent alarmSound;
+    [SerializeField]
+    private SimpleAudioEvent slowTimeSound;
+    [SerializeField]
+    private SimpleAudioEvent fastTimeSound;
 
     [Header("AudioSources:")]
     [SerializeField]
@@ -70,7 +111,11 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private AudioSource keyboardAudioSource;
     [SerializeField]
-    private AudioSource matterFlowAudioSource;
+    private AudioSource matterFlowRegularAudioSource;
+    [SerializeField]
+    private AudioSource matterFlowAntiAudioSource;
+    [SerializeField]
+    private AudioSource matterFlowDarkAudioSource;
     [SerializeField]
     private AudioSource ratioRegularAudioSource;
     [SerializeField]
@@ -82,12 +127,28 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private AudioSource pauseAudioSource;
     [SerializeField]
+    private AudioSource pauseEffectsAudioSource;
+    [SerializeField]
     private AudioSource explodeCoverAudioSource;
+    [SerializeField]
+    private AudioSource massDiodeAudioSource;
+    [SerializeField]
+    private AudioSource explosionAudioSource;
+    [SerializeField]
+    private AudioSource temperatureAudioSource;
+    [SerializeField]
+    private AudioSource densityAudioSource;
 
     // For easy access
     public Phase CurrentPhase {
-        get { return BangManager.instance.CurrentPhase;
+        get { return bgMan.CurrentPhase;
         }
+    }
+
+    public void NoteComplete()
+    {
+        note.SetActive(false);
+        StartCoroutine(GameManager.instance.StartAnimation());
     }
 
     // User Input Values
@@ -189,6 +250,12 @@ public class UIManager : MonoBehaviour
         set {
             megaSwitchSound.Play(pauseAudioSource);
             userInputPause = value;
+            if(value == true) {
+                slowTimeSound.Play(pauseEffectsAudioSource);
+            }
+            else {
+                fastTimeSound.Play(pauseEffectsAudioSource);
+            }
         }
     }
 
@@ -202,9 +269,31 @@ public class UIManager : MonoBehaviour
             userInputExplodeCover = value;
         }
     }
-    public bool UserInputExplode { get; set; }
+
+    private bool userInputExplode;
+    public bool UserInputExplode {
+        get
+        {
+            return userInputExplode;
+        }
+        set
+        {
+            if(value == true && bgMan.PhaseIsOnGoing) {
+                explodeSound.Play(explosionAudioSource);
+                explosion.SetActive(true);
+                userInputExplode = true;
+            }
+            else {
+                userInputExplode = false;
+            }
+        }
+    }
 
     private int tempTimer = 0;
+    private Color tempMassDiodeColorSuccess;
+    private Color tempMassDiodeColorFail;
+    private Color tempTemperatureColor;
+    private Color tempDensityColor;
 
     private void Awake() {
         if(instance == null) {
@@ -215,6 +304,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void Start() {
+        bgMan = BangManager.instance;
+    }
+
     private void Update() {
         imageSwitchPause.localScale = new Vector3(1f, (UserInputPause ? -1f : 1f), 1f);
         imageSwitchPause.localPosition = new Vector3(0f, (UserInputPause ? -10f : 10f), 0f);
@@ -223,8 +316,14 @@ public class UIManager : MonoBehaviour
         buttonExplode.interactable = (UserInputExplodeCover);
 
         if(CurrentPhase != null) {
-            matterFlowAudioSource.volume = NormalizedUserInputMassGainRatio / 10f;
-            matterFlowAudioSource.pitch = 0.75f + NormalizedUserInputMassGainRatio/2f;
+            matterFlowRegularAudioSource.volume = (NormalizedUserInputRatioRegular * NormalizedUserInputMassGainRatio) / 12f;
+            matterFlowRegularAudioSource.pitch = 0.75f + (NormalizedUserInputRatioRegular * NormalizedUserInputMassGainRatio) / 2f;
+
+            matterFlowAntiAudioSource.volume = (NormalizedUserInputRatioAnti * NormalizedUserInputMassGainRatio) / 8f;
+            matterFlowAntiAudioSource.pitch = 0.75f + (NormalizedUserInputRatioAnti * NormalizedUserInputMassGainRatio) / 2f;
+
+            matterFlowDarkAudioSource.volume = (NormalizedUserInputRatioDark * NormalizedUserInputMassGainRatio) / 8f;
+            matterFlowDarkAudioSource.pitch = 0.75f + (NormalizedUserInputRatioDark * NormalizedUserInputMassGainRatio) / 2f;
         }
     }
 
@@ -233,6 +332,7 @@ public class UIManager : MonoBehaviour
             // Timer:
             int timerValue = Mathf.Clamp(Mathf.CeilToInt(CurrentPhase.MissionTime), 0, int.MaxValue);
             missionTimer.text = new DateTime().AddSeconds(timerValue).ToString("mm:ss");
+            missionTimer.color = (timerValue <= 10f) ? colorDiodeFail : colorDiodeOn;
             if(timerValue < tempTimer) {
                 if(timerValue > 10)
                     timerSound.Play(timerAudioSource);
@@ -241,33 +341,98 @@ public class UIManager : MonoBehaviour
             }
             tempTimer = timerValue;
 
+            gaugeDensity.localEulerAngles = Vector3.Lerp(gaugeDensity.localEulerAngles, new Vector3(0f, 0f, 359f - bgMan.CurrentDensity * 270f), 0.02f);
+            gaugeTemperature.localEulerAngles = Vector3.Lerp(gaugeTemperature.localEulerAngles, new Vector3(0f, 0f, 359f - bgMan.CurrentTemperature * 270f), 0.02f);
+            gaugeVolatility.localEulerAngles = Vector3.Lerp(gaugeVolatility.localEulerAngles, new Vector3(0f, 0f, 359f - bgMan.CurrentVolatility * 270f), 0.02f);
+            gaugeMassRate.localEulerAngles = Vector3.Lerp(gaugeMassRate.localEulerAngles, new Vector3(0f, 0f, 359f - NormalizedUserInputMassGainRatio * 270f), 0.02f);
 
+            // Current mass text and diodes
+            currentMassText.text = bgMan.CurrentMass.ToString("n", new CultureInfo("en-US")) + " sm";
+            currentMassLightSuccess.color = (bgMan.CurrentMass > CurrentPhase.TargetMass && (bgMan.CurrentMass / CurrentPhase.TargetMass) < 1.1f) ? colorDiodeSuccess : colorDiodeOff;
+            currentMassLightWarning.color = (bgMan.CurrentMass < CurrentPhase.TargetMass || (bgMan.CurrentMass / CurrentPhase.TargetMass) > 1.1f) ? colorDiodeFail : colorDiodeOff;
 
-            gaugeDensity.localEulerAngles = Vector3.Lerp(gaugeDensity.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentDensity * 270f) + 359f), 0.02f);
-            gaugeTemperature.localEulerAngles = Vector3.Lerp(gaugeTemperature.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentTemperature * 270f) + 359f), 0.02f);
-            gaugeVolatility.localEulerAngles = Vector3.Lerp(gaugeVolatility.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentVolatility * 270f) + 359f), 0.02f);
-            gaugeMass.localEulerAngles = Vector3.Lerp(gaugeMass.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentMass / CurrentPhase.TargetMass * 225f) + 359f), 0.02f);
-            gaugeMassRate.localEulerAngles = Vector3.Lerp(gaugeMassRate.localEulerAngles, new Vector3(0f, 0f, (-NormalizedUserInputMassGainRatio * 270f) + 359f), 0.02f);
+            if(tempMassDiodeColorSuccess != currentMassLightSuccess.color && currentMassLightSuccess.color == colorDiodeSuccess) {
+                diodeSuccess.Play(massDiodeAudioSource);
+            }
+            if(tempMassDiodeColorFail != currentMassLightWarning.color && currentMassLightWarning.color == colorDiodeFail) {
+                diodeFail.Play(massDiodeAudioSource);
+            }
+            tempMassDiodeColorSuccess = currentMassLightSuccess.color;
+            tempMassDiodeColorFail = currentMassLightWarning.color;
+
+            // Diodes
+            foreach(var diode in phaseLights) {
+                diode.color = (phaseLights.IndexOf(diode) <= bgMan.CurrentPhaseIndex) ? colorDiodeSuccess : colorDiodeOn;
+            }
+
+            temperatureLight.color = (bgMan.CurrentTemperature < 0.9f) ? colorDiodeSuccess : colorDiodeFail;
+            if(tempTemperatureColor != temperatureLight.color) {
+                if(temperatureLight.color == colorDiodeSuccess) {
+                    diodeSuccess.Play(temperatureAudioSource);
+                }
+                else if(temperatureLight.color == colorDiodeFail) {
+                    alarmSound.Play(temperatureAudioSource);
+                }
+            }
+            tempTemperatureColor = temperatureLight.color;
+
+            densityLight.color = (bgMan.CurrentDensity < 0.9f) ? colorDiodeSuccess : colorDiodeFail;
+            if(tempDensityColor != densityLight.color) {
+                if(densityLight.color == colorDiodeSuccess) {
+                    diodeSuccess.Play(temperatureAudioSource);
+                }
+                else if(densityLight.color == colorDiodeFail) {
+                    alarmSound.Play(temperatureAudioSource);
+                }
+            }
+            tempDensityColor = densityLight.color;
         }
     }
 
     public void UpdatePanelForMission() {
+        var text = $"> {CurrentPhase.PhaseName} \n> target mass {CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))} solar masses\n> proportions ";
+        var formattedText = $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>";
 
-        var text = $"> target mass {CurrentPhase.TargetMass.ToString("F")} solar masses\n> proportions <color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
-    + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>"
-    + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>";
-
-        UpdatePanelText(text, 3f, false, true);
+        UpdatePanelText(text, 2f, false, true, formattedText);
     }
 
-    public void UpdatePanelText(string text, float time, bool humanInput, bool clearInput = false) {
+    public IEnumerator UpdatePanelForResults() {
+        UpdatePanelText($"> expected ", 0.5f, false, true, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>");
+        yield return new WaitForSeconds(1f);
+
+        UpdatePanelText($"\n> target mass {CurrentPhase.TargetMass.ToString("n", new CultureInfo("en-US"))} sm", 0.5f, false, false);
+        yield return new WaitForSeconds(1f);
+
+        UpdatePanelText($"\n> current ", 0.5f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(bgMan.CurrentMassRatioRegular * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(bgMan.CurrentMassRatioAnti * 100f).ToString("F")}</color>"
+            + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(bgMan.CurrentMassRatioDark * 100f).ToString("F")}</color>");
+        yield return new WaitForSeconds(1f);
+
+        UpdatePanelText($"\n> current mass {bgMan.CurrentMass.ToString("n", new CultureInfo("en-US"))} sm", 0.5f, false, false);
+        yield return new WaitForSeconds(3f);
+
+        UpdatePanelText($"\n> error margin ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorDiodeFail)}>{bgMan.CalculateErrorMargin().ToString("F")}%</color>");
+        yield return new WaitForSeconds(1.5f);
+
+        UpdatePanelText($"\n> volatility increased by ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorVolatility)}>{bgMan.CalculateVolatilityGain().ToString("F")}%</color>");
+        yield return new WaitForSeconds(3.5f);
+
+        UpdateUI();
+        yield return null;
+    }
+
+    public void UpdatePanelText(string text, float time, bool humanInput, bool clearInput = false, string formattedText = "") {
         if(clearInput)
             missionText.text = "";
 
-        StartCoroutine(UpdateMissionTextIEnumerator(text, time, humanInput));
+        StartCoroutine(UpdateMissionTextIEnumerator(text, time, humanInput, formattedText));
     }
 
-    private IEnumerator UpdateMissionTextIEnumerator(string text, float time, bool humanInput) {
+    private IEnumerator UpdateMissionTextIEnumerator(string text, float time, bool humanInput, string formatedText) {
 
         var interval = time / text.Length;
 
@@ -282,7 +447,20 @@ public class UIManager : MonoBehaviour
                 computerNoise.Play(keyboardAudioSource);
             }
         }
+        if(humanInput) {
+            keyboardEnterSound.Play(keyboardAudioSource);
+        }
+
+        if(!string.IsNullOrEmpty(formatedText)) {
+            missionText.text += formatedText;
+            computerFormattedNoise.Play(keyboardAudioSource);
+        }
 
         yield return null;
+    }
+
+    private void Explode()
+    {
+        explosion.SetActive(true);
     }
 }

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd5d8dfaab4dca4496b1d198ea2b225, type: 3}
+  m_Name: Test
+  m_EditorClassIdentifier: 
+  phaseName: 
+  percentDifferances:
+    minValue: 0.22023676
+    maxValue: 0.44766772
+  newMassFactor:
+    minValue: 7.773432
+    maxValue: 10.507242
+  acceptedErrorMargin:
+    minValue: 0.10211185
+    maxValue: 0.19958243
+  errorPenalty:
+    minValue: 0
+    maxValue: 0.10211183
+  missionTime:
+    minValue: 3.5924873
+    maxValue: 3.5924873
+  missionText: phase1 -singularity -init

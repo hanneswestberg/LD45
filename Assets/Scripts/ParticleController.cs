@@ -6,6 +6,9 @@ public class ParticleController : MonoBehaviour
     public ParticleSystem regular_matter;
     public ParticleSystem anti_matter;
     public ParticleSystem dark_matter;
+    public ParticleSystem regular_explode;
+    public ParticleSystem anti_explode;
+    public ParticleSystem dark_explode;
     public ParticleSystemForceField force_field;
 
     public float max_mass = 50f;
@@ -16,6 +19,7 @@ public class ParticleController : MonoBehaviour
     public float min_particles = 0f;
 
     private bool paused = false;
+    private bool exploding = false;
 
     BangManager bm;
     UIManager ui;
@@ -25,23 +29,32 @@ public class ParticleController : MonoBehaviour
         bm = BangManager.instance;
         ui = UIManager.instance;
 
-        ToggleAll(true);
+        ToggleAll("play");
         StartCoroutine(UpdateParticles());
     }
 
-    void ToggleAll(bool enabled)
+    void ToggleAll(string state)
     {
-        if (enabled)
+        if (state == "play")
         {
             regular_matter.Play();
             anti_matter.Play();
             dark_matter.Play();
         }
-        else
+        else if (state == "pause")
         {
             regular_matter.Pause();
             anti_matter.Pause();
             dark_matter.Pause();
+        }
+        else if (state == "stop")
+        {
+            regular_matter.Stop();
+            anti_matter.Stop();
+            dark_matter.Stop();
+            regular_matter.Clear();
+            anti_matter.Clear();
+            dark_matter.Clear();
         }
 
     }
@@ -50,14 +63,37 @@ public class ParticleController : MonoBehaviour
     {
         if (ui.UserInputPause)
         {
-            ToggleAll(false);
+            ToggleAll("pause");
             paused = true;
         }
         else if (paused)
         {
-            ToggleAll(true);
+            ToggleAll("play");
             paused = false;
         }
+
+        if (ui.UserInputExplode && !exploding)
+        {
+            exploding = true;
+            ToggleAll("stop");
+            Debug.Log("Exploding");
+            StartCoroutine(Explode());
+        }
+        else if (!ui.UserInputExplode)
+        {
+            exploding = false;
+        }
+    }
+
+    IEnumerator Explode()
+    {
+        regular_explode.Play();
+        anti_explode.Play();
+        dark_explode.Play();
+        yield return new WaitForSeconds(3.0f);
+        regular_explode.Stop();
+        anti_explode.Stop();
+        dark_explode.Stop();
     }
 
     IEnumerator UpdateParticles()
@@ -66,24 +102,31 @@ public class ParticleController : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
 
-            float norm_mass = bm.CurrentMass / max_mass;
-            float vol = bm.CurrentVolatility;
+            float norm_mass = Mathf.Clamp(Mathf.Log10(bm.CurrentMass) / 5f, -1f, 1f);
 
-            int num_part = (int)Mathf.Min(norm_mass * max_particles + min_particles, max_particles);
+            if(norm_mass < 0f && UIManager.instance.UserInputMassGainRatio > 0f) {
+                norm_mass = 0.05f;
+            }
 
-            force_field.startRange = Mathf.Min(norm_mass * max_size, 10);
-            force_field.gravity = Mathf.Min(norm_mass * max_gravity + min_gravity, max_gravity);
+            int num_part = (int)Mathf.Min(min_particles + norm_mass * max_particles, max_particles);
+
+            force_field.startRange = Mathf.Min(3f - 3f * norm_mass, 3f);
+            force_field.gravity = Mathf.Min(min_gravity + norm_mass * max_gravity, max_gravity);
 
             float mass_regu = norm_mass * bm.CurrentMassRatioRegular;
             float mass_anti = norm_mass * bm.CurrentMassRatioAnti;
             float mass_dark = norm_mass * bm.CurrentMassRatioDark;
 
             var main = regular_matter.main;
-            main.maxParticles = (int)(mass_regu * num_part);
-            main = anti_matter.main;
-            main.maxParticles = (int)(mass_anti * num_part);
-            main = dark_matter.main;
-            main.maxParticles = (int)(mass_dark * num_part);
+            if(norm_mass > 0f) {
+                main.maxParticles = (int)(mass_regu * num_part);
+                main = anti_matter.main;
+                main.maxParticles = (int)(mass_anti * num_part);
+                main = dark_matter.main;
+                main.maxParticles = (int)(mass_dark * num_part);
+            }
+
+            Debug.Log($"Norm mass: {norm_mass}, Num particles: {num_part}, max: {regular_matter.main.maxParticles}");
         }
     }
 }

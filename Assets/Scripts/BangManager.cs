@@ -1,8 +1,7 @@
 ﻿using System.Collections;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using System;
 using Random = UnityEngine.Random;
 
 public class BangManager : MonoBehaviour {
@@ -16,19 +15,24 @@ public class BangManager : MonoBehaviour {
     private List<PhaseData> phaseData = new List<PhaseData>();
 
     // Current statistic values
-    private float currenDensity = 0;
+    private float currentDensity = 0;
     public float CurrentDensity {
         get {
-            return Mathf.Clamp(Mathf.Lerp(currenDensity, currenDensity + (UIManager.instance.NormalizedUserInputMassGainRatio - 0.5f), 1f), 0f, 1f);
+            return currentDensity;
         }
     }
-    private float currenTemperature = 0;
+    private float currentTemperature = 0;
     public float CurrentTemperature {
         get {
-            return Mathf.Clamp(Mathf.Lerp(currenTemperature, currenTemperature + (UIManager.instance.NormalizedUserInputMassGainRatio - 0.5f), 1f), 0f, 1f);
+            return currentTemperature;
         }
     }
-    public float CurrentVolatility { get; private set; }
+    private float currentBaseVolatility = 0;
+    public float CurrentVolatility {
+        get {
+            return currentBaseVolatility + (CurrentTemperature / 10f);
+        }
+    }
 
     // Current masses and ratios
     public float CurrentMassRegular { get; private set; }
@@ -58,6 +62,8 @@ public class BangManager : MonoBehaviour {
     }
 
     public Phase CurrentPhase { get; private set; }
+    public int CurrentPhaseIndex { get; private set; }
+    public bool PhaseIsOnGoing { get; private set; }
     public Queue<PhaseData> phaseQueueData;
 
 
@@ -73,13 +79,17 @@ public class BangManager : MonoBehaviour {
     [SerializeField]
     private AudioSource phaseAudioSource;
 
+    private float tempMassGainRatio;
+
 
     public void StartNewBigBang() {
         // Start everything here
-        CurrentMassRegular = 0.01f;
-        CurrentMassDark = 0.01f;
-        CurrentMassAnti = 0.01f;
-        CurrentVolatility = 0.01f;
+        CurrentMassRegular = 0.001f;
+        CurrentMassDark = 0.001f;
+        CurrentMassAnti = 0.001f;
+        currentBaseVolatility = 0f;
+        currentDensity = 0;
+        currentTemperature = 0;
 
         // Don't start if we have no phases set
         if(!phaseData.Any())
@@ -106,18 +116,33 @@ public class BangManager : MonoBehaviour {
         }
     }
 
+    public float CalculateErrorMargin() {
+        return ((Mathf.Abs(CurrentPhase.MassRatioRegular - CurrentMassRatioRegular)
+            + Mathf.Abs(CurrentPhase.MassRatioAnti - CurrentMassRatioAnti)
+            + Mathf.Abs(CurrentPhase.MassRatioDark - CurrentMassRatioDark)) * 100f) 
+            * (((CurrentMass/CurrentPhase.TargetMass) < 1) ? 1/(CurrentMass / CurrentPhase.TargetMass) : CurrentMass / CurrentPhase.TargetMass);
+    }
+
+    public float CalculateVolatilityGain() {
+        var value = CalculateErrorMargin() * (1 + CurrentPhase.ErrorPenalty);
+        currentBaseVolatility += value/100f;
+        return value;
+    }
+
     /// <summary>
     /// Generate cool new phases
     /// </summary>
-    /// <param name="phaseData"></param>
+    /// <param name="currentPhaseData"></param>
     /// <returns>A new phase</returns>
-    private Phase GenerateNewPhase(PhaseData phaseData, float overrideCurrentMass = 0) {
+    private Phase GenerateNewPhase(PhaseData currentPhaseData, float overrideCurrentMass = 0) {
+        CurrentPhaseIndex = phaseData.IndexOf(currentPhaseData);
         var model = new  Phase() {
-            TargetMass = (overrideCurrentMass != 0 ? overrideCurrentMass : CurrentMass) * Random.Range(phaseData.NewMassFactor.minValue, phaseData.NewMassFactor.maxValue),
-            AcceptedErrorMargin = phaseData.AcceptedErrorMargin,
-            ErrorPenalty = Random.Range(phaseData.AcceptedErrorMargin.minValue, phaseData.AcceptedErrorMargin.maxValue),
-            MissionText = phaseData.MissionText,
-            MissionTime = Random.Range(phaseData.MissionTime.minValue, phaseData.MissionTime.maxValue)
+            PhaseName = currentPhaseData.PhaseName,
+            TargetMass = (overrideCurrentMass != 0 ? overrideCurrentMass : CurrentMass) * Random.Range(currentPhaseData.NewMassFactor.minValue, currentPhaseData.NewMassFactor.maxValue),
+            AcceptedErrorMargin = currentPhaseData.AcceptedErrorMargin,
+            ErrorPenalty = Random.Range(currentPhaseData.AcceptedErrorMargin.minValue, currentPhaseData.AcceptedErrorMargin.maxValue),
+            MissionText = currentPhaseData.MissionText,
+            MissionTime = Random.Range(currentPhaseData.MissionTime.minValue, currentPhaseData.MissionTime.maxValue)
         };
 
         // Generate a new ratio:
@@ -145,26 +170,48 @@ public class BangManager : MonoBehaviour {
     /// <returns></returns>
     private IEnumerator PhaseLoop(Phase phase) {
 
-        UIManager.instance.UpdatePanelText($"> start {phase.MissionText}", 2f, true, true);
-        yield return new WaitForSeconds(3f);
-        UIManager.instance.UpdatePanelText("\n...", 1f, false, false);
-        startSound.Play(startAudioSource);
+        if(!GameManager.instance.DebugMode) {
+            // Wait and show message here
+            UIManager.instance.UpdatePanelText($"> start {phase.MissionText}", 2f, true, true);
+            yield return new WaitForSeconds(3f);
+            UIManager.instance.UpdatePanelText("\n...", 1f, false, false);
+            startSound.Play(startAudioSource);
 
-        yield return new WaitForSeconds(2f);
-        phaseSound.Play(phaseAudioSource);
+            yield return new WaitForSeconds(2f);
+
+        }
+
         UIManager.instance.UpdateUI();
         UIManager.instance.UpdatePanelForMission();
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
+        phaseSound.Play(phaseAudioSource);
 
-        // Wait and show message here
-
-        var phaseIsOnGoing = true;
-        while(phaseIsOnGoing) {
+        PhaseIsOnGoing = true;
+        var phaseFailed = false;
+        while(PhaseIsOnGoing) {
 
             if(!UIManager.instance.UserInputPause) {
                 // Update mission timer
                 phase.MissionTime -= Time.deltaTime;
+
+                // Volatility increases slowly if temperature or density is high
+                currentBaseVolatility += Mathf.Clamp((currentTemperature - 0.8f) * Time.deltaTime / 20f, 0f, 1f);
+                currentBaseVolatility += Mathf.Clamp((currentDensity - 0.8f) * Time.deltaTime / 20f, 0f, 1f);
+
+                // Densisty increases if the flow is too high
+                currentDensity = Mathf.Clamp(currentDensity - (Time.deltaTime / 30f), 0f, 1f);
+                if(UIManager.instance.NormalizedUserInputMassGainRatio > 0.65f) {
+                    currentDensity = Mathf.Clamp(currentDensity + (Time.deltaTime/10f)* (0.35f + UIManager.instance.NormalizedUserInputMassGainRatio), 0f, 1f);
+                }
+
+                // Temperature increases if the flow changes too fast
+                currentTemperature = Mathf.Clamp(currentTemperature - (Time.deltaTime / 40f), 0f, 1f);
+                if(tempMassGainRatio != UIManager.instance.NormalizedUserInputMassGainRatio) {
+                    currentTemperature = Mathf.Clamp(currentTemperature + 0.03f, 0f, 1f);
+                }
+                tempMassGainRatio = UIManager.instance.NormalizedUserInputMassGainRatio;
+
 
                 // Normalize input values
                 var totInput = (UIManager.instance.NormalizedUserInputRatioRegular + UIManager.instance.NormalizedUserInputRatioDark + UIManager.instance.NormalizedUserInputRatioAnti);
@@ -174,9 +221,31 @@ public class BangManager : MonoBehaviour {
                     CurrentMassAnti += Time.deltaTime * (UIManager.instance.NormalizedUserInputMassGainRatio * CurrentMassGainRate) * (UIManager.instance.NormalizedUserInputRatioAnti / totInput);
                     CurrentMassDark += Time.deltaTime * (UIManager.instance.NormalizedUserInputMassGainRatio * CurrentMassGainRate) * (UIManager.instance.NormalizedUserInputRatioDark / totInput);
                 }
+                
+                // Call UI Manager to update values
+                UIManager.instance.UpdateUI();
 
-                if(phase.MissionTime < 0) {
-                    phaseIsOnGoing = false;
+                if(UIManager.instance.UserInputExplode || CurrentVolatility > 0.95f) {
+                    if(!UIManager.instance.UserInputExplode)
+                        UIManager.instance.UserInputExplode = true;
+
+                    PhaseIsOnGoing = false;
+                    phaseFailed = true;
+                    UIManager.instance.UpdatePanelText($"> singularity collapse", 1.5f, false, true);
+                    yield return new WaitForSeconds(2f);
+                    UIManager.instance.UpdatePanelText($"\n> good job...", 2f, false, false);
+                    yield return new WaitForSeconds(2.5f);
+                    UIManager.instance.UpdatePanelText($" *sarcastic*", 0.5f, false, false);
+                    yield return new WaitForSeconds(1f);
+                    UIManager.instance.UpdatePanelText($"\n> rebooting....", 3f, false, false);
+                    yield return new WaitForSeconds(3.5f);
+                    UIManager.instance.UserInputExplode = false;
+                    StartCoroutine(GameManager.instance.StartAnimation());
+                }
+
+                if(phase.MissionTime < 0 && !phaseFailed) {
+                    PhaseIsOnGoing = false;
+                    startSound.Play(startAudioSource);
 
                     UIManager.instance.UserInputRatioRegular = 0;
                     UIManager.instance.UserInputRatioAntiButton1 = false;
@@ -184,21 +253,56 @@ public class BangManager : MonoBehaviour {
                     UIManager.instance.UserInputRatioAntiButton3 = false;
                     UIManager.instance.UserInputRatioDark = 0;
                     UIManager.instance.UserInputMassGainRatio = 0;
-                }
 
-                // Call UI Manager to update values
-                UIManager.instance.UpdateUI();
+                    UIManager.instance.UpdatePanelText("\n> phase completed", 1f, false, false);
+                    yield return new WaitForSeconds(1.5f);
+                    UIManager.instance.UpdatePanelText("\n> calculating phase results", 1f, false, false);
+                    yield return new WaitForSeconds(1.5f);
+                    UIManager.instance.UpdatePanelText("\nLOADING [............]", 3f, false, false);
+                    yield return new WaitForSeconds(3.5f);
+                    StartCoroutine(UIManager.instance.UpdatePanelForResults());
+                    yield return new WaitForSeconds(12f);
+                }
             }
 
             yield return null;
         }
 
-        startSound.Play(phaseAudioSource);
-        yield return new WaitForSeconds(2f);
+        if(!phaseFailed) {
+            yield return new WaitForSeconds(2f);
 
-        CurrentPhase = GenerateNewPhase(phaseQueueData.Dequeue());
+            if(phaseQueueData.Count > 0) {
+                CurrentPhase = GenerateNewPhase(phaseQueueData.Dequeue());
 
-        // Start the mission
-        StartCoroutine(PhaseLoop(CurrentPhase));
+                // Start the mission
+                StartCoroutine(PhaseLoop(CurrentPhase));
+            }
+            else {
+                UIManager.instance.UpdatePanelText("> big bang singularity fully charged", 2f, false, true);
+                yield return new WaitForSeconds(2.5f);
+
+                UIManager.instance.UpdatePanelText("\n> awaiting explosion input...", 2f, false, false);
+                PhaseIsOnGoing = true;
+                while(!UIManager.instance.UserInputExplode) {
+                    yield return null;
+                }
+                UIManager.instance.UserInputExplode = false;
+                PhaseIsOnGoing = false;
+                yield return new WaitForSeconds(1f);
+                UIManager.instance.UpdatePanelText("\n> big bang created", 2f, false, false);
+                yield return new WaitForSeconds(2.5f);
+                UIManager.instance.UpdatePanelText("\n> congratz", 2f, false, false);
+
+                yield return new WaitForSeconds(4f);
+
+                UIManager.instance.UpdatePanelText("> start again?", 1f, false, true);
+
+                yield return new WaitForSeconds(1.5f);
+                UIManager.instance.UpdatePanelText("\n> yes", 1f, true, false);
+
+                yield return new WaitForSeconds(4f);
+                StartNewBigBang();
+            }
+        }
     }
 }

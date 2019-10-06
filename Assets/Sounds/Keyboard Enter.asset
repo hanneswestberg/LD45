@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f596aed7f1a81fe47a27c95de1b9c547, type: 3}
+  m_Name: Keyboard Enter
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 08ee08a8eb15a314f879805b14503d06, type: 3}
+  - {fileID: 8300000, guid: 58cab0c50983c994aaffef9814a50503, type: 3}
+  - {fileID: 8300000, guid: 21a5f215a2a14ac45abb46dd6ccfebfc, type: 3}
+  volume:
+    minValue: 0.586072
+    maxValue: 0.68897176
+  pitch:
+    minValue: 0.8961647
+    maxValue: 1.130028
