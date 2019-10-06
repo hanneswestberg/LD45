@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f596aed7f1a81fe47a27c95de1b9c547, type: 3}
+  m_Name: Switch
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 07c51ad9428fba74ab71ca0e5214110f, type: 3}
+  - {fileID: 8300000, guid: 524423299cff2264baaef6807462fd53, type: 3}
+  - {fileID: 8300000, guid: a7bca5ff638a66746932b812f9400587, type: 3}
+  - {fileID: 8300000, guid: 054dc9b4592e63241b52d2879f9c27c7, type: 3}
+  volume:
+    minValue: 0.35921422
+    maxValue: 0.5088868
+  pitch:
+    minValue: 1.4387277
+    maxValue: 1.6632371

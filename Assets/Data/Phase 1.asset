@@ -16,8 +16,8 @@ MonoBehaviour:
     minValue: 0.22023676
     maxValue: 0.44766772
   newMassFactor:
-    minValue: 6.084938
-    maxValue: 8.818748
+    minValue: 7.773432
+    maxValue: 10.507242
   acceptedErrorMargin:
     minValue: 0.10211185
     maxValue: 0.19958243
@@ -25,6 +25,6 @@ MonoBehaviour:
     minValue: 0
     maxValue: 0.10211183
   missionTime:
-    minValue: 60.403812
-    maxValue: 60.403812
-  missionText: 'Phase 1: Initialize the Singularity'
+    minValue: 60.40381
+    maxValue: 60.40381
+  missionText: phase1 -sinularity -init

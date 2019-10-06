@@ -9,6 +9,7 @@ public class BangManager : MonoBehaviour {
     // Singleton instance
     public static BangManager instance;
 
+#pragma warning disable 0649
     [Header("Phases:")]
     [Tooltip("All the phases of the game")]
     [SerializeField]
@@ -18,13 +19,13 @@ public class BangManager : MonoBehaviour {
     private float currenDensity = 0;
     public float CurrentDensity {
         get {
-            return Mathf.Clamp(Mathf.Lerp(currenDensity, currenDensity + (CurrentMassGainRate - 0.5f), 0.001f), 0f, 1f);
+            return Mathf.Clamp(Mathf.Lerp(currenDensity, currenDensity + (UIManager.instance.NormalizedUserInputMassGainRatio - 0.5f), 1f), 0f, 1f);
         }
     }
     private float currenTemperature = 0;
     public float CurrentTemperature {
         get {
-            return Mathf.Clamp(Mathf.Lerp(currenTemperature, currenTemperature + (CurrentMassGainRate - 0.5f), 0.001f), 0f, 1f);
+            return Mathf.Clamp(Mathf.Lerp(currenTemperature, currenTemperature + (UIManager.instance.NormalizedUserInputMassGainRatio - 0.5f), 1f), 0f, 1f);
         }
     }
     public float CurrentVolatility { get; private set; }
@@ -57,6 +58,21 @@ public class BangManager : MonoBehaviour {
     }
 
     public Phase CurrentPhase { get; private set; }
+    public Queue<PhaseData> phaseQueueData;
+
+
+    [Header("Sounds:")]
+    [SerializeField]
+    private SimpleAudioEvent startSound;
+    [SerializeField]
+    private SimpleAudioEvent phaseSound;
+
+    [Header("AudioSources:")]
+    [SerializeField]
+    private AudioSource startAudioSource;
+    [SerializeField]
+    private AudioSource phaseAudioSource;
+
 
     public void StartNewBigBang() {
         // Start everything here
@@ -69,8 +85,13 @@ public class BangManager : MonoBehaviour {
         if(!phaseData.Any())
             return;
 
+        phaseQueueData = new Queue<PhaseData>();
+        foreach(var phase in phaseData) {
+            phaseQueueData.Enqueue(phase);
+        }
+
         // Generate the phase
-        CurrentPhase = GenerateNewPhase(phaseData.FirstOrDefault(), 1f);
+        CurrentPhase = GenerateNewPhase(phaseQueueData.Dequeue(), 1f);
 
         // Start the mission
         StartCoroutine(PhaseLoop(CurrentPhase));
@@ -123,8 +144,20 @@ public class BangManager : MonoBehaviour {
     /// <param name="phase"></param>
     /// <returns></returns>
     private IEnumerator PhaseLoop(Phase phase) {
-        // Wait and show message here
+
+        UIManager.instance.UpdatePanelText($"> start {phase.MissionText}", 2f, true, true);
         yield return new WaitForSeconds(3f);
+        UIManager.instance.UpdatePanelText("\n...", 1f, false, false);
+        startSound.Play(startAudioSource);
+
+        yield return new WaitForSeconds(2f);
+        phaseSound.Play(phaseAudioSource);
+        UIManager.instance.UpdateUI();
+        UIManager.instance.UpdatePanelForMission();
+
+        yield return new WaitForSeconds(2f);
+
+        // Wait and show message here
 
         var phaseIsOnGoing = true;
         while(phaseIsOnGoing) {
@@ -144,18 +177,26 @@ public class BangManager : MonoBehaviour {
 
                 if(phase.MissionTime < 0) {
                     phaseIsOnGoing = false;
+
+                    UIManager.instance.UserInputRatioRegular = 0;
+                    UIManager.instance.UserInputRatioAntiButton1 = false;
+                    UIManager.instance.UserInputRatioAntiButton2 = false;
+                    UIManager.instance.UserInputRatioAntiButton3 = false;
+                    UIManager.instance.UserInputRatioDark = 0;
+                    UIManager.instance.UserInputMassGainRatio = 0;
                 }
 
                 // Call UI Manager to update values
                 UIManager.instance.UpdateUI();
-
-                Debug.Log($"CurrentMass: {CurrentMass}");
             }
 
             yield return null;
         }
 
-        CurrentPhase = GenerateNewPhase(phaseData.FirstOrDefault());
+        startSound.Play(phaseAudioSource);
+        yield return new WaitForSeconds(2f);
+
+        CurrentPhase = GenerateNewPhase(phaseQueueData.Dequeue());
 
         // Start the mission
         StartCoroutine(PhaseLoop(CurrentPhase));

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f596aed7f1a81fe47a27c95de1b9c547, type: 3}
+  m_Name: Keyboard
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: d0ddfc7f137dba64aaeb03e384c35591, type: 3}
+  - {fileID: 8300000, guid: def95bcdab1437c4f8df0efa0ecb78e4, type: 3}
+  - {fileID: 8300000, guid: dc242cf9e954a0649a1bdc4e99da59a8, type: 3}
+  - {fileID: 8300000, guid: e3efd17c6dc753949b4ae3a1048d2085, type: 3}
+  - {fileID: 8300000, guid: 3b93fee3a3b3e7d4dacf09dc0320adc3, type: 3}
+  volume:
+    minValue: 0.28437796
+    maxValue: 0.38727784
+  pitch:
+    minValue: 0.8961647
+    maxValue: 1.130028

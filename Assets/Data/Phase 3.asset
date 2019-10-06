@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bd5d8dfaab4dca4496b1d198ea2b225, type: 3}
-  m_Name: TestPhase
+  m_Name: Phase 3
   m_EditorClassIdentifier: 
   percentDifferances:
-    minValue: 0.20631245
-    maxValue: 0.28057563
+    minValue: 0.22023676
+    maxValue: 0.44766772
   newMassFactor:
-    minValue: 10.053376
-    maxValue: 12.787188
+    minValue: 12.305705
+    maxValue: 16.081432
   acceptedErrorMargin:
-    minValue: 0.10211185
-    maxValue: 0.19958243
+    minValue: 0.04641448
+    maxValue: 0.10211202
   errorPenalty:
-    minValue: 0
-    maxValue: 0.10211183
+    minValue: 0.0974704
+    maxValue: 0.18101642
   missionTime:
-    minValue: 60.403812
-    maxValue: 60.403812
-  missionText: 'Phase 1: Initialize the Singularity'
+    minValue: 48.93202
+    maxValue: 63.97033
+  missionText: phase 3 -danger -zone

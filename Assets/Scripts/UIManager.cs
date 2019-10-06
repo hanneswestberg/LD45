@@ -46,20 +46,115 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Button buttonExplode;
 
+    [Header("Sounds:")]
+    [SerializeField]
+    private SimpleAudioEvent timerSound;
+    [SerializeField]
+    private SimpleAudioEvent timerLowSound;
+    [SerializeField]
+    private SimpleAudioEvent keyboardSound;
+    [SerializeField]
+    private SimpleAudioEvent switchSound;
+    [SerializeField]
+    private SimpleAudioEvent buttonSound;
+    [SerializeField]
+    private SimpleAudioEvent megaSwitchSound;
+    [SerializeField]
+    private SimpleAudioEvent explodeCoverSound;
+    [SerializeField]
+    private SimpleAudioEvent computerNoise;
+
+    [Header("AudioSources:")]
+    [SerializeField]
+    private AudioSource timerAudioSource;
+    [SerializeField]
+    private AudioSource keyboardAudioSource;
+    [SerializeField]
+    private AudioSource matterFlowAudioSource;
+    [SerializeField]
+    private AudioSource ratioRegularAudioSource;
+    [SerializeField]
+    private AudioSource ratioDarkAudioSource;
+    [SerializeField]
+    private AudioSource ratioAntiAudioSource;
+    [SerializeField]
+    private AudioSource ratioMassAudioSource;
+    [SerializeField]
+    private AudioSource pauseAudioSource;
+    [SerializeField]
+    private AudioSource explodeCoverAudioSource;
+
     // For easy access
     public Phase CurrentPhase {
         get { return BangManager.instance.CurrentPhase;
         }
     }
 
-
     // User Input Values
-    public float UserInputRatioRegular { get; set; }
-    public float UserInputRatioDark { get; set; }
-    public bool UserInputRatioAntiButton1 { get; set; }
-    public bool UserInputRatioAntiButton2 { get; set; }
-    public bool UserInputRatioAntiButton3 { get; set; }
-    public float UserInputMassGainRatio { get; set; }
+    private float userInputRatioRegular;
+    public float UserInputRatioRegular {
+        get {
+            return userInputRatioRegular;
+        }
+        set {
+            switchSound.Play(ratioRegularAudioSource);
+            userInputRatioRegular = value;
+        }
+    }
+
+    private float userInputRatioDark;
+    public float UserInputRatioDark {
+        get {
+            return userInputRatioDark;
+        }
+        set {
+            switchSound.Play(ratioDarkAudioSource);
+            userInputRatioDark = value;
+        }
+    }
+
+    private bool userInputRatioAntiButton1;
+    public bool UserInputRatioAntiButton1 {
+        get {
+            return userInputRatioAntiButton1;
+        }
+        set {
+            buttonSound.Play(ratioAntiAudioSource);
+            userInputRatioAntiButton1 = value;
+        }
+    }
+    private bool userInputRatioAntiButton2;
+    public bool UserInputRatioAntiButton2 {
+        get {
+            return userInputRatioAntiButton2;
+        }
+        set {
+            buttonSound.Play(ratioAntiAudioSource);
+            userInputRatioAntiButton2 = value;
+        }
+    }
+
+    private bool userInputRatioAntiButton3;
+    public bool UserInputRatioAntiButton3 {
+        get {
+            return userInputRatioAntiButton3;
+        }
+        set {
+            buttonSound.Play(ratioAntiAudioSource);
+            userInputRatioAntiButton3 = value;
+        }
+    }
+
+    private float userInputMassGainRatio;
+    public float UserInputMassGainRatio {
+        get {
+            return userInputMassGainRatio;
+        }
+        set {
+            switchSound.Play(ratioMassAudioSource);
+            userInputMassGainRatio = value;
+        }
+    }
 
     public float NormalizedUserInputRatioRegular {
         get {
@@ -86,9 +181,30 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public bool UserInputPause { get; set; }
-    public bool UserInputExplodeCover { get; set; }
+    private bool userInputPause;
+    public bool UserInputPause {
+        get {
+            return userInputPause;
+        }
+        set {
+            megaSwitchSound.Play(pauseAudioSource);
+            userInputPause = value;
+        }
+    }
+
+    private bool userInputExplodeCover;
+    public bool UserInputExplodeCover {
+        get {
+            return userInputExplodeCover;
+        }
+        set {
+            explodeCoverSound.Play(explodeCoverAudioSource);
+            userInputExplodeCover = value;
+        }
+    }
     public bool UserInputExplode { get; set; }
+
+    private int tempTimer = 0;
 
     private void Awake() {
         if(instance == null) {
@@ -105,14 +221,27 @@ public class UIManager : MonoBehaviour
 
         imageSwitchExplodeCover.localScale = new Vector3(1f, (UserInputExplodeCover ? -1f : 1f), 1f);
         buttonExplode.interactable = (UserInputExplodeCover);
+
+        if(CurrentPhase != null) {
+            matterFlowAudioSource.volume = NormalizedUserInputMassGainRatio / 10f;
+            matterFlowAudioSource.pitch = 0.75f + NormalizedUserInputMassGainRatio/2f;
+        }
     }
 
     public void UpdateUI() {
         if(CurrentPhase != null) {
-            missionText.text = $"> mission {CurrentPhase.MissionText} \n> target mass {CurrentPhase.TargetMass.ToString("F")} solar masses\n> proportions <color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>" 
-                + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>"
-                + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>";
-            missionTimer.text = new DateTime().AddSeconds(Mathf.Clamp(Mathf.CeilToInt(CurrentPhase.MissionTime), 0, float.MaxValue)).ToString("mm:ss");
+            // Timer:
+            int timerValue = Mathf.Clamp(Mathf.CeilToInt(CurrentPhase.MissionTime), 0, int.MaxValue);
+            missionTimer.text = new DateTime().AddSeconds(timerValue).ToString("mm:ss");
+            if(timerValue < tempTimer) {
+                if(timerValue > 10)
+                    timerSound.Play(timerAudioSource);
+                else
+                    timerLowSound.Play(timerAudioSource);
+            }
+            tempTimer = timerValue;
+
+
 
             gaugeDensity.localEulerAngles = Vector3.Lerp(gaugeDensity.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentDensity * 270f) + 359f), 0.02f);
             gaugeTemperature.localEulerAngles = Vector3.Lerp(gaugeTemperature.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentTemperature * 270f) + 359f), 0.02f);
@@ -120,5 +249,40 @@ public class UIManager : MonoBehaviour
             gaugeMass.localEulerAngles = Vector3.Lerp(gaugeMass.localEulerAngles, new Vector3(0f, 0f, (-BangManager.instance.CurrentMass / CurrentPhase.TargetMass * 225f) + 359f), 0.02f);
             gaugeMassRate.localEulerAngles = Vector3.Lerp(gaugeMassRate.localEulerAngles, new Vector3(0f, 0f, (-NormalizedUserInputMassGainRatio * 270f) + 359f), 0.02f);
         }
+    }
+
+    public void UpdatePanelForMission() {
+
+        var text = $"> target mass {CurrentPhase.TargetMass.ToString("F")} solar masses\n> proportions <color=#{ColorUtility.ToHtmlStringRGBA(colorMassRegular)}>{(CurrentPhase.MassRatioRegular * 100f).ToString("F")}</color>"
+    + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassDark)}>{(CurrentPhase.MassRatioDark * 100f).ToString("F")}</color>"
+    + $" / <color=#{ColorUtility.ToHtmlStringRGBA(colorMassAnti)}>{(CurrentPhase.MassRatioAnti * 100f).ToString("F")}</color>";
+
+        UpdatePanelText(text, 3f, false, true);
+    }
+
+    public void UpdatePanelText(string text, float time, bool humanInput, bool clearInput = false) {
+        if(clearInput)
+            missionText.text = "";
+
+        StartCoroutine(UpdateMissionTextIEnumerator(text, time, humanInput));
+    }
+
+    private IEnumerator UpdateMissionTextIEnumerator(string text, float time, bool humanInput) {
+
+        var interval = time / text.Length;
+
+        foreach(var character in text) {
+            yield return new WaitForSeconds(interval);
+            missionText.text += character;
+
+            if(humanInput) {
+                keyboardSound.Play(keyboardAudioSource);
+            }
+            else {
+                computerNoise.Play(keyboardAudioSource);
+            }
+        }
+
+        yield return null;
     }
 }

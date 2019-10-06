@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    [SerializeField]
+    private bool debugMode = false;
+
     // Singleton
     private void Awake() {
         if(instance == null) {
@@ -27,13 +30,27 @@ public class GameManager : MonoBehaviour
 
         // Show tutorial here
 
-        // Start the game
-        BangManager.instance.StartNewBigBang();
+        StartCoroutine(StartAnimation());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private IEnumerator StartAnimation() {
+        if(!debugMode) {
+            yield return new WaitForSeconds(1f);
+            UIManager.instance.UpdatePanelText("> start bigbang.exe", 2f, true);
+            yield return new WaitForSeconds(3f);
+            UIManager.instance.UpdatePanelText("\n...", 1f, false);
+            yield return new WaitForSeconds(2f);
+            UIManager.instance.UpdatePanelText("\nbig bang creator loaded", 1f, false);
+            yield return new WaitForSeconds(2f);
+            UIManager.instance.UpdatePanelText("\nopening up parallell dimension", 1f, false);
+            yield return new WaitForSeconds(2f);
+            UIManager.instance.UpdatePanelText("\nplease specify action:", 1f, false);
+            yield return new WaitForSeconds(2f);
+
+        }
+
+        // Start the game
+        BangManager.instance.StartNewBigBang();
+        yield return null;
     }
 }

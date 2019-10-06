@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f596aed7f1a81fe47a27c95de1b9c547, type: 3}
+  m_Name: Button
+  m_EditorClassIdentifier: 
+  clips:
+  - {fileID: 8300000, guid: 31ca01f2be164ad4d90e09bc24477d11, type: 3}
+  - {fileID: 8300000, guid: 5801ba23f3fd0844885d6857e9bdb273, type: 3}
+  - {fileID: 8300000, guid: 50e3b9e59dc9c2f4e81a40d4f88377c5, type: 3}
+  - {fileID: 8300000, guid: 20512adf896aead46ba96c7026812e9d, type: 3}
+  volume:
+    minValue: 0.4527596
+    maxValue: 0.6024325
+  pitch:
+    minValue: 0.88681006
+    maxValue: 1.1113194

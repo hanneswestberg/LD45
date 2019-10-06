@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIMassRatios : MonoBehaviour
 {
+#pragma warning disable 0649
     [SerializeField]
     private RectTransform background;
     [SerializeField]

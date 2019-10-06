@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1bd5d8dfaab4dca4496b1d198ea2b225, type: 3}
-  m_Name: Phase 2
+  m_Name: Phase 5
   m_EditorClassIdentifier: 
   percentDifferances:
     minValue: 0.22023676
     maxValue: 0.44766772
   newMassFactor:
-    minValue: 10.172871
-    maxValue: 13.948597
+    minValue: 11.071081
+    maxValue: 14.846808
   acceptedErrorMargin:
     minValue: 0.04641448
     maxValue: 0.10211202
@@ -25,6 +25,6 @@ MonoBehaviour:
     minValue: 0.0974704
     maxValue: 0.18101642
   missionTime:
-    minValue: 70.82163
-    maxValue: 85.859955
-  missionText: phase 2 -stabilize
+    minValue: 24.982147
+    maxValue: 38.349537
+  missionText: phase 5 -init -explosion
