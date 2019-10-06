@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f596aed7f1a81fe47a27c95de1b9c547, type: 3}
-  m_Name: Computer
+  m_Name: Paper
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 3582ea54350d0a844a1d3da8fa1cdeb7, type: 3}
+  - {fileID: 8300000, guid: 2244e6b6325d9274abf5a336a8b6cd75, type: 3}
+  - {fileID: 8300000, guid: 5bc6cb73857fe55439ddb6eee48308c9, type: 3}
   volume:
-    minValue: 0.58691114
-    maxValue: 0.67973995
+    minValue: 0.2797365
+    maxValue: 0.38263652
   pitch:
-    minValue: 0.9788815
-    maxValue: 1.016013
+    minValue: 0.8961647
+    maxValue: 1.1114619

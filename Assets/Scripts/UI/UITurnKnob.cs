@@ -15,7 +15,10 @@ public class UITurnKnob : MonoBehaviour
 
 
     public void OnMouseDrag() {
-        var dirToCamera = new Vector2(knob.position.x, knob.position.y) - new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        var cameraPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var dirToCamera = new Vector2(knob.position.x, knob.position.y) - new Vector2(cameraPos.x, cameraPos.y);
+
+        //var dirToCamera = new Vector2(knob.position.x, knob.position.y) - new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         var angle = (dirToCamera.x < 0) ? 180f - Vector2.Angle(Vector2.down, dirToCamera) : 180f + Vector2.Angle(Vector2.down, dirToCamera);
         knob.localEulerAngles = new Vector3(0f, 0f, Mathf.Clamp(Mathf.RoundToInt(angle/clampValue) * clampValue, 40f, 320f));
 
@@ -23,5 +26,5 @@ public class UITurnKnob : MonoBehaviour
             currentValue = Mathf.RoundToInt((320f - knob.localEulerAngles.z) / clampValue);
             UIManager.instance.UserInputRatioDark = currentValue;
         }
-    }
+    } 
 }

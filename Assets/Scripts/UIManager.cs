@@ -104,6 +104,8 @@ public class UIManager : MonoBehaviour
     private SimpleAudioEvent slowTimeSound;
     [SerializeField]
     private SimpleAudioEvent fastTimeSound;
+    [SerializeField]
+    private SimpleAudioEvent paperSound;
 
     [Header("AudioSources:")]
     [SerializeField]
@@ -148,6 +150,7 @@ public class UIManager : MonoBehaviour
     public void NoteComplete()
     {
         note.SetActive(false);
+        paperSound.Play(keyboardAudioSource);
         StartCoroutine(GameManager.instance.StartAnimation());
     }
 
@@ -317,13 +320,13 @@ public class UIManager : MonoBehaviour
 
         if(CurrentPhase != null) {
             matterFlowRegularAudioSource.volume = (NormalizedUserInputRatioRegular * NormalizedUserInputMassGainRatio) / 12f;
-            matterFlowRegularAudioSource.pitch = 0.75f + (NormalizedUserInputRatioRegular * NormalizedUserInputMassGainRatio) / 2f;
+            matterFlowRegularAudioSource.pitch = (!UserInputPause) ? 0.75f + (NormalizedUserInputRatioRegular * NormalizedUserInputMassGainRatio) / 2f : Mathf.Lerp(matterFlowRegularAudioSource.pitch, 0f, 0.05f);
 
             matterFlowAntiAudioSource.volume = (NormalizedUserInputRatioAnti * NormalizedUserInputMassGainRatio) / 8f;
-            matterFlowAntiAudioSource.pitch = 0.75f + (NormalizedUserInputRatioAnti * NormalizedUserInputMassGainRatio) / 2f;
+            matterFlowAntiAudioSource.pitch = (!UserInputPause) ? 0.75f + (NormalizedUserInputRatioAnti * NormalizedUserInputMassGainRatio) / 2f : Mathf.Lerp(matterFlowAntiAudioSource.pitch, 0f, 0.05f);
 
             matterFlowDarkAudioSource.volume = (NormalizedUserInputRatioDark * NormalizedUserInputMassGainRatio) / 8f;
-            matterFlowDarkAudioSource.pitch = 0.75f + (NormalizedUserInputRatioDark * NormalizedUserInputMassGainRatio) / 2f;
+            matterFlowDarkAudioSource.pitch = (!UserInputPause) ? 0.75f + (NormalizedUserInputRatioDark * NormalizedUserInputMassGainRatio) / 2f : Mathf.Lerp(matterFlowDarkAudioSource.pitch, 0f, 0.05f);
         }
     }
 
@@ -419,10 +422,26 @@ public class UIManager : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         UpdatePanelText($"\n> volatility increased by ", 1f, false, false, $"<color=#{ColorUtility.ToHtmlStringRGBA(colorVolatility)}>{bgMan.CalculateVolatilityGain().ToString("F")}%</color>");
-        yield return new WaitForSeconds(3.5f);
+        yield return new WaitForSeconds(1f);
+
+        StartCoroutine(UpdateVolatilityMeter());
+
+        yield return new WaitForSeconds(2.5f);
 
         UpdateUI();
         yield return null;
+    }
+
+    public IEnumerator UpdateVolatilityMeter() {
+
+        // Update for 3 seconds...
+        var timer = 3f;
+        while(timer > 0) {
+            timer -= Time.deltaTime;
+            gaugeVolatility.localEulerAngles = Vector3.Lerp(gaugeVolatility.localEulerAngles, new Vector3(0f, 0f, 359f - bgMan.CurrentVolatility * 270f), 0.02f);
+            yield return null;
+        }
+
     }
 
     public void UpdatePanelText(string text, float time, bool humanInput, bool clearInput = false, string formattedText = "") {

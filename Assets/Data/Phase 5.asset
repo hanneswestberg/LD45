@@ -23,9 +23,9 @@ MonoBehaviour:
     minValue: 0.04641448
     maxValue: 0.10211202
   errorPenalty:
-    minValue: 0.35019737
-    maxValue: 0.43374348
+    minValue: 0.37804607
+    maxValue: 0.46159217
   missionTime:
-    minValue: 24.982147
-    maxValue: 38.349537
-  missionText: phase 5 -init -explosion
+    minValue: 28.880962
+    maxValue: 45.03321
+  missionText: phase5 -explosion -init

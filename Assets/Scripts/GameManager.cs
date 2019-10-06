@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
             UIManager.instance.UpdatePanelText("\n> big bang creator loaded", 1f, false);
             yield return new WaitForSeconds(2f);
-            UIManager.instance.UpdatePanelText("\n> opening up parallell dimension", 1f, false);
+            UIManager.instance.UpdatePanelText("\n> opening up parallel dimension", 1f, false);
             yield return new WaitForSeconds(2f);
             UIManager.instance.UpdatePanelText("\n> initialize big bang by going to phase 5", 1f, false);
             yield return new WaitForSeconds(3f);

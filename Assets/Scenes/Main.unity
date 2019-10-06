@@ -413,7 +413,7 @@ MonoBehaviour:
   volumeTrigger: {fileID: 1213466205}
   volumeLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 4294967295
   stopNaNPropagation: 1
   finalBlitToCameraTarget: 0
   antialiasingMode: 0
@@ -678,6 +678,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8749696001491994552, guid: 76e40979596255649aa40afb1ae042fd,
+        type: 3}
+      propertyPath: phaseData.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 4bb32de183578d747bcd0f5b69e19f98,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76e40979596255649aa40afb1ae042fd, type: 3}
 --- !u!1001 &4262209734447708681
@@ -807,6 +813,103 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4262209734320699036, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209734320699036, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1213466203}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 63
+      objectReference: {fileID: 0}
+    - target: {fileID: 4262209732985447973, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -67
+      objectReference: {fileID: 0}
+    - target: {fileID: 490620506448689840, guid: fde377b2f20d9af45b1fa8fbb19c2d6b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_text
+      value: 'If you read this, you''re the unfortunate soul who got this job. Congratulations.
+
+
+        Your job is to follow the instructions.
+
+
+        match the mass.
+
+
+        green - The regular stuff
+
+        red - Anti matter
+
+        blue - Dark matter
+
+
+        Big right lever - add mass
+
+        Small knob - Pause
+
+
+        Explode - DON''T
+
+        Remember the time limit.
+
+
+        Now you know everthing. It''s not like it''s space science       // Steve
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 365
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 77
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 21
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: 326
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148426211, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fde377b2f20d9af45b1fa8fbb19c2d6b, type: 3}
 --- !u!1001 &7118984109171093126
@@ -875,6 +978,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109477363721, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109477363721, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109477363721, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109118313315, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109118313315, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109596400438, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: InitialModule.maxNumParticles
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109596400438, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7118984109596400438, guid: 89160aec71ea32e4fbd57cba37bd2fdc,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89160aec71ea32e4fbd57cba37bd2fdc, type: 3}

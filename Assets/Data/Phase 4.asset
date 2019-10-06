@@ -23,9 +23,9 @@ MonoBehaviour:
     minValue: 0.04641448
     maxValue: 0.10211202
   errorPenalty:
-    minValue: 0.31770736
-    maxValue: 0.40125322
+    minValue: 0.41981918
+    maxValue: 0.59619415
   missionTime:
     minValue: 29.437937
     maxValue: 39.463486
-  missionText: phase 4 -turbo
+  missionText: phase4 -rapid -concentration

@@ -103,6 +103,8 @@ public class BangManager : MonoBehaviour {
         // Generate the phase
         CurrentPhase = GenerateNewPhase(phaseQueueData.Dequeue(), 1f);
 
+        ParticleController.instance.StartParticles();
+
         // Start the mission
         StartCoroutine(PhaseLoop(CurrentPhase));
     }
@@ -159,7 +161,6 @@ public class BangManager : MonoBehaviour {
 
         CurrentMassGainRate = ((model.TargetMass - (overrideCurrentMass != 0 ? overrideCurrentMass : CurrentMass)) / model.MissionTime) * 3f;
 
-        Debug.Log($"Target Mass: {model.TargetMass}, Regular: {model.MassRatioRegular}, Anti: {model.MassRatioAnti}, Dark: {model.MassRatioDark}, Total: {model.MassRatioRegular + model.MassRatioAnti + model.MassRatioDark}");
         return model;
     }
 
@@ -186,6 +187,8 @@ public class BangManager : MonoBehaviour {
 
         yield return new WaitForSeconds(3f);
         phaseSound.Play(phaseAudioSource);
+
+        yield return new WaitForSeconds(1f);
 
         PhaseIsOnGoing = true;
         var phaseFailed = false;
@@ -225,24 +228,6 @@ public class BangManager : MonoBehaviour {
                 // Call UI Manager to update values
                 UIManager.instance.UpdateUI();
 
-                if(UIManager.instance.UserInputExplode || CurrentVolatility > 0.95f) {
-                    if(!UIManager.instance.UserInputExplode)
-                        UIManager.instance.UserInputExplode = true;
-
-                    PhaseIsOnGoing = false;
-                    phaseFailed = true;
-                    UIManager.instance.UpdatePanelText($"> singularity collapse", 1.5f, false, true);
-                    yield return new WaitForSeconds(2f);
-                    UIManager.instance.UpdatePanelText($"\n> good job...", 2f, false, false);
-                    yield return new WaitForSeconds(2.5f);
-                    UIManager.instance.UpdatePanelText($" *sarcastic*", 0.5f, false, false);
-                    yield return new WaitForSeconds(1f);
-                    UIManager.instance.UpdatePanelText($"\n> rebooting....", 3f, false, false);
-                    yield return new WaitForSeconds(3.5f);
-                    UIManager.instance.UserInputExplode = false;
-                    StartCoroutine(GameManager.instance.StartAnimation());
-                }
-
                 if(phase.MissionTime < 0 && !phaseFailed) {
                     PhaseIsOnGoing = false;
                     startSound.Play(startAudioSource);
@@ -262,6 +247,24 @@ public class BangManager : MonoBehaviour {
                     yield return new WaitForSeconds(3.5f);
                     StartCoroutine(UIManager.instance.UpdatePanelForResults());
                     yield return new WaitForSeconds(12f);
+                }
+
+                if(UIManager.instance.UserInputExplode || CurrentVolatility > 0.95f) {
+                    PhaseIsOnGoing = true;
+                    if(!UIManager.instance.UserInputExplode)
+                        UIManager.instance.UserInputExplode = true;
+                    PhaseIsOnGoing = false;
+                    phaseFailed = true;
+                    UIManager.instance.UpdatePanelText($"> singularity collapse", 1.5f, false, true);
+                    yield return new WaitForSeconds(2f);
+                    UIManager.instance.UpdatePanelText($"\n> good job...", 2f, false, false);
+                    yield return new WaitForSeconds(2.5f);
+                    UIManager.instance.UpdatePanelText($" *sarcastic*", 0.5f, false, false);
+                    yield return new WaitForSeconds(1f);
+                    UIManager.instance.UpdatePanelText($"\n> rebooting....", 3f, false, false);
+                    yield return new WaitForSeconds(3.5f);
+                    UIManager.instance.UserInputExplode = false;
+                    StartCoroutine(GameManager.instance.StartAnimation());
                 }
             }
 

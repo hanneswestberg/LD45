@@ -28,4 +28,4 @@ MonoBehaviour:
   missionTime:
     minValue: 57.45426
     maxValue: 69.15071
-  missionText: phase 2 -stabilize
+  missionText: phase2 -stabilize

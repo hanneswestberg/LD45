@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ParticleController : MonoBehaviour
 {
+    public static ParticleController instance;
+
     public ParticleSystem regular_matter;
     public ParticleSystem anti_matter;
     public ParticleSystem dark_matter;
@@ -24,11 +26,22 @@ public class ParticleController : MonoBehaviour
     BangManager bm;
     UIManager ui;
 
+    private void Awake() {
+        if(instance == null) {
+            instance = this;
+        }
+        else {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         bm = BangManager.instance;
         ui = UIManager.instance;
+    }
 
+    public void StartParticles() {
         ToggleAll("play");
         StartCoroutine(UpdateParticles());
     }
@@ -76,7 +89,6 @@ public class ParticleController : MonoBehaviour
         {
             exploding = true;
             ToggleAll("stop");
-            Debug.Log("Exploding");
             StartCoroutine(Explode());
         }
         else if (!ui.UserInputExplode)
@@ -117,6 +129,13 @@ public class ParticleController : MonoBehaviour
             float mass_anti = norm_mass * bm.CurrentMassRatioAnti;
             float mass_dark = norm_mass * bm.CurrentMassRatioDark;
 
+            var regularEmission = regular_matter.emission;
+            regularEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+            var antiEmission = anti_matter.emission;
+            antiEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+            var darkEmission = dark_matter.emission;
+            darkEmission.enabled = (bm.PhaseIsOnGoing && ui.UserInputMassGainRatio > 0f);
+
             var main = regular_matter.main;
             if(norm_mass > 0f) {
                 main.maxParticles = (int)(mass_regu * num_part);
@@ -125,8 +144,6 @@ public class ParticleController : MonoBehaviour
                 main = dark_matter.main;
                 main.maxParticles = (int)(mass_dark * num_part);
             }
-
-            Debug.Log($"Norm mass: {norm_mass}, Num particles: {num_part}, max: {regular_matter.main.maxParticles}");
         }
     }
 }
