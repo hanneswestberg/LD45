@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private GameObject explosion;
     [SerializeField]
+    private GameObject blackHole;
+    [SerializeField]
     private Image temperatureLight;
     [SerializeField]
     private Image densityLight;
@@ -108,6 +110,7 @@ public class UIManager : MonoBehaviour
     private SimpleAudioEvent fastTimeSound;
     [SerializeField]
     private SimpleAudioEvent paperSound;
+
 
     [Header("AudioSources:")]
     [SerializeField]
@@ -285,7 +288,14 @@ public class UIManager : MonoBehaviour
         {
             if(value == true && bgMan.PhaseIsOnGoing) {
                 explodeSound.Play(explosionAudioSource);
-                explosion.SetActive(true);
+
+                if(BangManager.instance.IsGameFinishedAndWaitingForUserToExplode) {
+                    explosion.SetActive(true);
+                }
+                else {
+                    blackHole.SetActive(true);
+                }
+
                 userInputExplode = true;
             }
             else {

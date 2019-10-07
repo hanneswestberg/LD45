@@ -25,6 +25,7 @@ public class UITurnKnob : MonoBehaviour
         if(currentValue != Mathf.RoundToInt((320f - knob.localEulerAngles.z) / clampValue)) {
             currentValue = Mathf.RoundToInt((320f - knob.localEulerAngles.z) / clampValue);
             UIManager.instance.UserInputRatioDark = currentValue;
+
         }
     } 
 }

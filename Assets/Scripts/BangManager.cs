@@ -258,9 +258,17 @@ public class BangManager : MonoBehaviour {
                         UIManager.instance.UserInputExplode = true;
                     PhaseIsOnGoing = false;
                     phaseFailed = true;
-                    UIManager.instance.UpdatePanelText($"> singularity collapse", 1.5f, false, true);
+                    UIManager.instance.UpdatePanelText($"> singularity collapsed into black hole", 1.5f, false, true);
                     yield return new WaitForSeconds(2f);
-                    UIManager.instance.UpdatePanelText($"\n> good job...", 2f, false, false);
+
+                    var responses = new List<string>() {
+                        "wow such competence",
+                        "incredible job",
+                        "good job",
+                        "fantastic performance"
+                    };
+
+                    UIManager.instance.UpdatePanelText($"\n> {responses[Random.Range(0, responses.Count)]}...", 2f, false, false);
                     yield return new WaitForSeconds(2.5f);
                     UIManager.instance.UpdatePanelText($" *sarcastic*", 0.5f, false, false);
                     yield return new WaitForSeconds(1f);

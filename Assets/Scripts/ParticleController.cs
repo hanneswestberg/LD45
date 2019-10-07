@@ -89,7 +89,10 @@ public class ParticleController : MonoBehaviour
         {
             exploding = true;
             ToggleAll("stop");
-            StartCoroutine(Explode());
+
+            if(GameObject.Find("Explosion") != null) {
+                StartCoroutine(Explode());
+            }
         }
         else if (!ui.UserInputExplode)
         {
